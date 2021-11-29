@@ -44,9 +44,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        /*helpers_.Initialize(Http);
-        * 
-        sequenceCities = helpers_.sequenceCities;// await Http.GetFromJsonAsync<SequenceCities[]>("sample-data/cities.json");*/
         if (!helpers_.IsInitialized) await helpers_.Initialize(Http);
         sequenceCities = helpers_.sequenceCities;
         StateHasChanged();

@@ -39,18 +39,28 @@ namespace Signal
         {
             var now = DateTime.Now;// .AddDays(5).AddHours(17)
 
-            var near = sequenceCities.Aggregate(
+            var pointNext = sequenceCities.Aggregate(
                 (x, y) =>
                 {
                     //x.Date - now > y.Date - now ? x : y
-                    return (x.Date - now).Value.Seconds < 0 ? y : x;
+                    //var t1 = (x.Date - now).Value.Seconds;
+                    var t = (x.Date - now).Value.TotalSeconds;
+                    return t < 0 ? y : x;
                 }
             ); // выбираем ближайшую большую сигнальную точку
 
-            var tmleft = (long)(near.Date - now)?.TotalSeconds;
+            var index = Array.IndexOf(sequenceCities, pointNext);
+            var pointCur = index > 0 ? sequenceCities[index - 1] : pointNext;
+            var tmleft = (long)(pointNext.Date - now)?.TotalSeconds;
+            if (tmleft < 0)
+            {
+                pointCur = pointNext;
+                pointNext = null;
+                tmleft = 0;
+            }
 
             //return tmleft < 0 ? -1 : tmleft;
-            return new CountdownView { Data = near, Seconds = tmleft };
+            return new CountdownView { PointCur = pointCur, PointNext = pointNext, Seconds = tmleft };
         }
 
     }
@@ -64,7 +74,8 @@ namespace Signal
 
     public class CountdownView
     {
-        public SequenceCities Data { get; set; }
+        public SequenceCities PointCur { get; set; }
+        public SequenceCities PointNext { get; set; }
         public long Seconds { get; set; }
     }
 }
