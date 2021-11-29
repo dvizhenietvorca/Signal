@@ -1,0 +1,66 @@
+﻿@page "/settings"
+@inject HttpClient Http
+@inject Helpers helpers_
+@using Signal.Shared
+@using System.Linq
+
+<MudDatePicker Label="Дата Посыла" DateChanged="OnDateChanged" />
+<MudTimePicker Label="Час Посыла" TimeChanged="OnTimeChanged" OpenTo="OpenTo.Hours" TimeEditMode="TimeEditMode.OnlyHours" />
+
+@if (sequenceCities == null)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+    <MudTable Items="sequenceCities" Hover="true" RowsPerPage=25 SortLabel="Sort By" Elevation="0">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<SequenceCities, object>(x=>x.Date)">Время</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SequenceCities, object>(x=>x.City)">Город</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Время">@context.Date</MudTd>
+            <MudTd DataLabel="Город">@context.City</MudTd>
+        </RowTemplate>
+        <RowEditingTemplate>
+            <MudTd DataLabel="Время">
+                <MudTextField @bind-Value="@context.Date" Required />
+            </MudTd>
+            <MudTd DataLabel="Город">
+                <MudTextField @bind-Value="@context.City" Required />
+            </MudTd>
+        </RowEditingTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        </PagerContent>
+    </MudTable>
+}
+
+
+@code {
+    private SequenceCities[] sequenceCities;
+    //private DateTime? Date { get; set; }
+    //private TimeSpan? Time { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        /*helpers_.Initialize(Http);
+        * 
+        sequenceCities = helpers_.sequenceCities;// await Http.GetFromJsonAsync<SequenceCities[]>("sample-data/cities.json");*/
+        if (!helpers_.IsInitialized) await helpers_.Initialize(Http);
+        sequenceCities = helpers_.sequenceCities;
+        StateHasChanged();
+    }
+
+    private async Task OnDateChanged(DateTime? date)
+    {
+        Array.ForEach(sequenceCities, x => x.Date = date?.AddHours((double)x.Date?.Hour).AddMinutes((double)x.Date?.Minute));
+    }
+
+    private async Task OnTimeChanged(TimeSpan? time)
+    {
+        double h = (double)time?.Hours;
+
+        Array.ForEach(sequenceCities, x => x.Date = x.Date?.AddHours(-(double)x.Date?.Hour).AddHours(h));
+    }
+}

@@ -1,0 +1,54 @@
+﻿@page "/"
+@using System.Threading
+@inject HttpClient Http
+@inject Helpers helpers_
+@implements IDisposable
+
+@if(Time != null)
+{
+    TimeSpan t = TimeSpan.FromSeconds((double)Time.Seconds);
+    var strFormat = "{0:D2}:{1:D2}:{2:D2}";
+    if(Time.Seconds < 3600) strFormat = "{1:D2}:{2:D2}";
+    string s = string.Format(strFormat, ((int) t.TotalHours), t.Minutes, t.Seconds);
+    
+        <MudElement Class="d-flex justify-center py-2 px-1 mt-6"><H1 style="font-size: 6em;">@Time?.Data.City</H1></MudElement>
+        <MudElement Class="d-flex justify-center py-2 px-1 mt-6"><H1 style="font-size: 6em;">@s</H1></MudElement>
+}
+
+@code {
+
+    private SequenceCities[] sequenceCities;
+    System.Threading.Timer timer;
+    CountdownView Time { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!helpers_.IsInitialized) await helpers_.Initialize(Http);
+        //sequenceCities = helpers_.sequenceCities;
+
+        int num = 0; 
+        // устанавливаем метод обратного вызова
+        TimerCallback tm = new TimerCallback(CallbackTimer);
+        // создаем таймер
+        Timer timer = new Timer(tm, num, 0, 10000);
+
+        /*timer = new System.Threading.Timer(async _ =>
+        {
+            Time = helpers_.Countdown();
+            await InvokeAsync(StateHasChanged);
+            //await InvokeAsync(() => StateHasChanged());
+            //StateHasChanged();
+        }, null, 0, 10000);*/
+    }
+
+    private void CallbackTimer(object obj)
+    {
+        Time = helpers_.Countdown();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+}
