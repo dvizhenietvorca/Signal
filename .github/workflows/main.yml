@@ -6,7 +6,7 @@ on: [push]
 branches: [ master ]
 
 jobs:
-deploy-to-github-pages:
+build:
 # Use Ubuntu-latest image to run steps on
 runs-on: windows-2022
 steps:
