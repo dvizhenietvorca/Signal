@@ -1,45 +1,54 @@
 ﻿@page "/"
 @using System.Threading
 @inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject Helpers helpers_
 @inject IJSRuntime _jsRuntime;
 @implements IDisposable
 
 <audio id="roar" src="../sounds/sound2.mp3" />
 
-@if(Data != null)
-{
-    TimeSpan t = TimeSpan.FromSeconds((double)Data.Seconds);
-    var strFormat = "{0:D2}:{1:D2}:{2:D2}";
-    if(Data.Seconds < 3600) strFormat = "{1:D2}:{2:D2}";
-    string s = string.Format(strFormat, ((int) t.TotalHours), t.Minutes, t.Seconds);
+<MudCard Style="height:800px;display:flex;flex-direction:column">
+    <MudCardHeader>
+        <CardHeaderContent>
+            @if(Data != null)
+            {
+                TimeSpan t = TimeSpan.FromSeconds((double)Data.Seconds);
+                var strFormat = "{0:D2}:{1:D2}:{2:D2}";
+                if(Data.Seconds < 3600) strFormat = "{1:D2}:{2:D2}";
+                string s = string.Format(strFormat, ((int) t.TotalHours), t.Minutes, t.Seconds);
     
-    if (Data.Seconds == 0) {
-        PlaySound();
-    }
+                if (Data.Seconds == 0 && !isLast) {
+                    PlaySound();
+                }
 
-    @*<MudElement Class="d-flex justify-center py-2 px-1 mt-6"><H6 style="font-size: 4em;">@Data?.PointCur?.City</H6></MudElement>
-    <MudElement Class="d-flex justify-center py-2 px-1 mt-6"><H6 style="font-size: 4em;">@s</H6></MudElement>
-    <MudElement Class="d-flex justify-center py-2 px-1 mt-6"><H6 style="font-size: 4em;">@(Data?.PointNext?.City ?? "Устье")</H6></MudElement>*@
-
-    <MudText Typo="Typo.h3" Align="Align.Center">@Data?.PointCur?.City</MudText>
-    <MudText Typo="Typo.h1" Align="Align.Center">@s</MudText>
-    <MudText Typo="Typo.h3" Align="Align.Center">@(Data?.PointNext?.City ?? "Устье")</MudText>
-    
-    <MudContainer Class="d-flex justify-center py-2 px-1 mt-6" MaxWidth="MaxWidth.Medium"><img src="/img/volga.png" /></MudContainer>
-
-    @*<MudCard>
-        <MudCardHeader>
-            <CardHeaderContent>
                 <MudText Typo="Typo.h3" Align="Align.Center">@Data?.PointCur?.City</MudText>
-                <MudText Typo="Typo.h1" Align="Align.Center">@s</MudText>
+                <MudText Typo="Typo.h2" Align="Align.Center">@s</MudText>
                 <MudText Typo="Typo.h3" Align="Align.Center">@(Data?.PointNext?.City ?? "Устье")</MudText>
-            </CardHeaderContent>
-        </MudCardHeader>
-        <MudCardMedia Image="/img/volga.png" Height="750" />
-    </MudCard>*@
 
-}
+                @*<MudElement Class="d-flex justify-center py-2 px-1 mt-6"><H6 style="font-size: 4em;">@Data?.PointCur?.City</H6></MudElement>
+                <MudElement Class="d-flex justify-center py-2 px-1 mt-6"><H6 style="font-size: 4em;">@s</H6></MudElement>
+                <MudElement Class="d-flex justify-center py-2 px-1 mt-6"><H6 style="font-size: 4em;">@(Data?.PointNext?.City ?? "Устье")</H6></MudElement>*@
+
+                @*<MudText Typo="Typo.h3" Align="Align.Center">@Data?.PointCur?.City</MudText>
+                <MudText Typo="Typo.h1" Align="Align.Center">@s</MudText>
+                <MudText Typo="Typo.h3" Align="Align.Center">@(Data?.PointNext?.City ?? "Устье")</MudText>*@
+            }
+            else
+            {
+                <MudText Typo="Typo.h5" Align="Align.Center">Данные не загружены</MudText>
+            }
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent Style="overflow:auto">
+        <div align="center">
+            <img src="/img/volga.png" />
+        </div>
+    </MudCardContent>
+    @*<MudCardMedia Image="/img/volga.png" Height="750" />*@
+</MudCard>
+
+@*<MudContainer Class="d-flex justify-center py-2 px-1 mt-6" MaxWidth="MaxWidth.Medium" Style="overflow-y: scroll"><img src="/img/volga.png" /></MudContainer>*@
 
 @code {
 
@@ -50,22 +59,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (!helpers_.IsInitialized) await helpers_.Initialize(Http);
-        //sequenceCities = helpers_.sequenceCities;
+        if (!helpers_.IsInitialized) await helpers_.Initialize(Http, localStorage);
 
         int num = 0; 
         // устанавливаем метод обратного вызова
         TimerCallback tm = new TimerCallback(CallbackTimer);
         // создаем таймер
         Timer timer = new Timer(tm, num, 0, 1000);
-
-        /*timer = new System.Threading.Timer(async _ =>
-            {
-            Data = helpers_.Countdown();
-            await InvokeAsync(StateHasChanged);
-            //await InvokeAsync(() => StateHasChanged());
-            //StateHasChanged();
-        }, null, 0, 10000);*/
     }
 
     public async Task PlaySound()
@@ -76,7 +76,9 @@
     private void CallbackTimer(object obj)
     {
         Data = helpers_.Countdown();
-        
+
+        if (Data == null) return;
+
         if (Data.Seconds == 0 && Data.PointNext == null && !isLast) isLast = true;
         else StateHasChanged();
     }

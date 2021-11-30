@@ -1,5 +1,6 @@
 ﻿@page "/settings"
 @inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject Helpers helpers_
 @using Signal.Shared
 @using System.Linq
@@ -16,36 +17,58 @@ else
     <MudTable Items="sequenceCities" Hover="true" RowsPerPage=25 SortLabel="Sort By" Elevation="0">
         <HeaderContent>
             <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<SequenceCities, object>(x=>x.Date)">Время</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<SequenceCities, object>(x=>x.City)">Город</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SequenceCities, object>(x=>x.City)">Место</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Время">@context.Date</MudTd>
-            <MudTd DataLabel="Город">@context.City</MudTd>
+            <MudTd DataLabel="Место">@context.City</MudTd>
         </RowTemplate>
-        <RowEditingTemplate>
+        @*<RowEditingTemplate>
             <MudTd DataLabel="Время">
                 <MudTextField @bind-Value="@context.Date" Required />
             </MudTd>
             <MudTd DataLabel="Город">
                 <MudTextField @bind-Value="@context.City" Required />
             </MudTd>
-        </RowEditingTemplate>
+        </RowEditingTemplate>*@
         <PagerContent>
             <MudTablePager PageSizeOptions="new int[]{50, 100}" />
         </PagerContent>
     </MudTable>
 }
 
+<MudTextField T="string" Value="@DataPath" ValueChanged="OnDataPathChanged" OnAdornmentClick="OnLoad" Placeholder="Путь к данным" Adornment="Adornment.End" AdornmentIcon="@Icons.Filled.Refresh" />
+
 
 @code {
     private SequenceCities[] sequenceCities;
+    private string DataPath { get; set; }
+
     //private DateTime? Date { get; set; }
     //private TimeSpan? Time { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if (!helpers_.IsInitialized) await helpers_.Initialize(Http);
+        if (!helpers_.IsInitialized) await helpers_.Initialize(Http, localStorage);
         sequenceCities = helpers_.sequenceCities;
+        DataPath = helpers_.DataPath;
+        StateHasChanged();
+    }
+
+    private async Task OnDataPathChanged(string value)
+    {
+        DataPath = value;
+        helpers_.DataPath = value;
+        //await helpers_.LoadData();
+
+        await localStorage.SetItemAsync("dataPath", value);
+    }
+
+    private async Task OnLoad()
+    {
+        await helpers_.LoadData();
+        sequenceCities = helpers_.sequenceCities;
+
         StateHasChanged();
     }
 

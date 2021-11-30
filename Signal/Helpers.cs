@@ -21,14 +21,43 @@ namespace Signal
         }
         public event Action OnChange;
         private void NotifyStateChanged() => OnChange?.Invoke();
+        private HttpClient _Http;
+
+        public string DataPath;// = "sample-data/cities.json";
 
 
         public SequenceCities[] sequenceCities;
 
-        public async Task Initialize(HttpClient Http)
+        public async Task Initialize(HttpClient http, Blazored.LocalStorage.ILocalStorageService localStorage)
         {
-            sequenceCities = await Http.GetFromJsonAsync<SequenceCities[]>("sample-data/cities.json");
+            _Http = http;
+
+            if (string.IsNullOrEmpty(DataPath))
+                DataPath = await localStorage.GetItemAsync<string>("dataPath");
+
+            await LoadData();
+
             isInitialized = true;
+        }
+
+        public async Task LoadData()
+        {
+            if (!string.IsNullOrEmpty(DataPath))
+            {
+                Random rnd = new Random();
+                int rndValue = rnd.Next();
+
+                try
+                {
+                    sequenceCities = await _Http.GetFromJsonAsync<SequenceCities[]>(DataPath + "?v=" + rndValue);
+                }
+                catch (Exception)
+                {
+
+                    //throw;
+                }
+            }
+            else sequenceCities = null;
         }
 
         /// <summary>
@@ -37,6 +66,8 @@ namespace Signal
         /// <returns></returns>
         public CountdownView Countdown()
         {
+            if (sequenceCities == null) return null;
+
             var now = DateTime.Now;// .AddDays(5).AddHours(17)
 
             var pointNext = sequenceCities.Aggregate(

@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ namespace Signal
             builder.Services.AddMudServices();
 
             builder.Services.AddSingleton<Helpers>();
+            builder.Services.AddBlazoredLocalStorage();
 
             await builder.Build().RunAsync();
         }
