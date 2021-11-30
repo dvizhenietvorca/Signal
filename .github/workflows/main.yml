@@ -17,7 +17,7 @@ steps:
 – name: Setup .NET Core SDK
 uses: actions/setup-dotnet@v1
 with:
-dotnet-version: 3.1
+dotnet-version: 6.0
 
 # Publishes the Blazor project to the release folder
 – name: Publish .NET Core Project
