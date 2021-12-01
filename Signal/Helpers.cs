@@ -53,8 +53,6 @@ namespace Signal
                 }
                 catch (Exception)
                 {
-
-                    //throw;
                 }
             }
             else sequenceCities = null;
