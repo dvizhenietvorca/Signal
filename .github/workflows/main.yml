@@ -15,6 +15,12 @@ jobs:
         dotnet-version: 6.0.*
     - name: Publish with dotnet
       run: dotnet publish --configuration Release --output build
+    – name: Change base-tag in index.html from Home to Signal
+      run: sed -i 's/<base href="\/" \/>/<base href="\/Signal\/" \/>/g' build/wwwroot/index.html
+    – name: copy index.html to 404.html
+      run: cp build/wwwroot/index.html build/wwwroot/404.html
+    – name: Add .nojekyll file
+      run: touch build/wwwroot/.nojekyll
     - name: Deploy to Github Pages
       uses: JamesIves/github-pages-deploy-action@4.1.7
       with:
