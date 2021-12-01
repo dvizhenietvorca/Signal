@@ -23,14 +23,6 @@ else
             <MudTd DataLabel="Время">@context.Date</MudTd>
             <MudTd DataLabel="Место">@context.City</MudTd>
         </RowTemplate>
-        @*<RowEditingTemplate>
-            <MudTd DataLabel="Время">
-                <MudTextField @bind-Value="@context.Date" Required />
-            </MudTd>
-            <MudTd DataLabel="Город">
-                <MudTextField @bind-Value="@context.City" Required />
-            </MudTd>
-        </RowEditingTemplate>*@
         <PagerContent>
             <MudTablePager PageSizeOptions="new int[]{50, 100}" />
         </PagerContent>
