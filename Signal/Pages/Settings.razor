@@ -44,9 +44,6 @@ else
     private SequenceCities[] sequenceCities;
     private string DataPath { get; set; }
 
-    //private DateTime? Date { get; set; }
-    //private TimeSpan? Time { get; set; }
-
     protected override async Task OnInitializedAsync()
     {
         if (!helpers_.IsInitialized) await helpers_.Initialize(Http, localStorage);
