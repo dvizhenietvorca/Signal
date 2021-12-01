@@ -72,7 +72,6 @@ namespace Signal
                 (x, y) =>
                 {
                     //x.Date - now > y.Date - now ? x : y
-                    //var t1 = (x.Date - now).Value.Seconds;
                     var t = (x.Date - now).Value.TotalSeconds;
                     return t < 0 ? y : x;
                 }
@@ -88,7 +87,6 @@ namespace Signal
                 tmleft = 0;
             }
 
-            //return tmleft < 0 ? -1 : tmleft;
             return new CountdownView { PointCur = pointCur, PointNext = pointNext, Seconds = tmleft };
         }
 
