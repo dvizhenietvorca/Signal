@@ -8,7 +8,7 @@
 
 <audio id="roar" src="sounds/sound2.mp3" />
 
-<MudCard Style="height:800px;display:flex;flex-direction:column">
+<MudCard Style="height:700px;display:flex;flex-direction:column">
     <MudCardHeader>
         <CardHeaderContent>
             @if(Data != null)
@@ -22,9 +22,9 @@
                     PlaySound();
                 }
 
-                <MudText Typo="Typo.h3" Align="Align.Center">@Data?.PointCur?.City</MudText>
-                <MudText Typo="Typo.h2" Align="Align.Center">@s</MudText>
-                <MudText Typo="Typo.h3" Align="Align.Center">@(Data?.PointNext?.City ?? "Устье")</MudText>
+                <MudText Typo="Typo.h4" Align="Align.Center">@Data?.PointCur?.City</MudText>
+                <MudText Typo="Typo.h3" Align="Align.Center">@s</MudText>
+                <MudText Typo="Typo.h4" Align="Align.Center">@(Data?.PointNext?.City ?? "Устье")</MudText>
 
                 @*<MudElement Class="d-flex justify-center py-2 px-1 mt-6"><H6 style="font-size: 4em;">@Data?.PointCur?.City</H6></MudElement>
                 <MudElement Class="d-flex justify-center py-2 px-1 mt-6"><H6 style="font-size: 4em;">@s</H6></MudElement>
