@@ -1,8 +1,10 @@
 ﻿@inherits LayoutComponentBase
 
+@inject IJSRuntime _jsRuntime;
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject HttpClient Http
 @inject Helpers helpers_
+@using System.Threading
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -12,6 +14,7 @@
     <MudAppBar Dense=true Elevation="0">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudSpacer />
+        <MudIconButton Icon="@Icons.Filled.Refresh" Color="Color.Inherit" OnClick="@((e) => RefreshTimer())" />
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
         <MudDrawerHeader>
@@ -20,9 +23,11 @@
         <NavMenu />
     </MudDrawer>
     <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.False">
-            @Body
-        </MudContainer>
+        <CascadingValue Value="timer">
+            <MudContainer MaxWidth="MaxWidth.False">
+                @Body
+            </MudContainer>
+        </CascadingValue>
     </MudMainContent>
 </MudLayout>
 
@@ -32,8 +37,12 @@
 
     [Inject] private IDialogService DialogService { get; set; }
 
+    private System.Threading.Timer timer;
+
     protected override async Task OnInitializedAsync()
     {
+        await _jsRuntime.InvokeAsync<string>("WakeLockMethod");
+
         //if (!helpers_.IsInitialized) await helpers_.Initialize(Http, localStorage);
 
         var _openPopup = !(await localStorage.GetItemAsync<bool>("isReadFirst"));
@@ -46,9 +55,10 @@
                 yesText:"Понятно!", cancelText:"Отмена");
 
             if (result != null) await localStorage.SetItemAsync("isReadFirst", true);
-            
+
             StateHasChanged();
         }
+
 
     }
 
@@ -61,4 +71,12 @@
     {
         _drawerOpen = !_drawerOpen;
     }
+
+    async Task RefreshTimer()
+    {
+        var t = helpers_.RefreshTimer();
+        await DialogService.ShowMessageBox("Test", "Timer = "+t);
+    }
+
+
 }

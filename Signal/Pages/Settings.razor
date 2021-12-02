@@ -4,6 +4,8 @@
 @inject Helpers helpers_
 @using Signal.Shared
 @using System.Linq
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration configuration
 
 <MudDatePicker Label="Дата Посыла" DateChanged="OnDateChanged" />
 <MudTimePicker Label="Час Посыла" TimeChanged="OnTimeChanged" OpenTo="OpenTo.Hours" TimeEditMode="TimeEditMode.OnlyHours" />
@@ -38,7 +40,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if (!helpers_.IsInitialized) await helpers_.Initialize(Http, localStorage);
+        if (!helpers_.IsInitialized) await helpers_.Initialize(Http, localStorage, configuration);
         sequenceCities = helpers_.sequenceCities;
         DataPath = helpers_.DataPath;
         StateHasChanged();

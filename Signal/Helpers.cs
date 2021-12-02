@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.Configuration;
+
 namespace Signal
 {
     public class Helpers
@@ -23,17 +25,22 @@ namespace Signal
         private void NotifyStateChanged() => OnChange?.Invoke();
         private HttpClient _Http;
 
-        public string DataPath;// = "sample-data/cities.json";
+        public string DataPath;
 
 
         public SequenceCities[] sequenceCities;
 
-        public async Task Initialize(HttpClient http, Blazored.LocalStorage.ILocalStorageService localStorage)
+        Pages.Index _Index;
+
+        public async Task Initialize(HttpClient http, Blazored.LocalStorage.ILocalStorageService localStorage, IConfiguration configuration, Pages.Index index = null)
         {
+            _Index = index;
             _Http = http;
 
+            DataPath = await localStorage.GetItemAsync<string>("dataPath");
+
             if (string.IsNullOrEmpty(DataPath))
-                DataPath = await localStorage.GetItemAsync<string>("dataPath");
+                DataPath = configuration["dataPath"];
 
             await LoadData();
 
@@ -88,6 +95,19 @@ namespace Signal
             }
 
             return new CountdownView { PointCur = pointCur, PointNext = pointNext, Seconds = tmleft };
+        }
+
+        public string RefreshTimer()
+        {
+            var t = "null";
+            if (_Index.timer != null)
+            {
+                t = _Index.timer.ToString();
+                _Index.timer.Dispose();
+            }
+            _Index.CreateTimer();
+
+            return t;
         }
 
     }
