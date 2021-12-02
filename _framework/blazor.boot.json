@@ -1,6 +1,8 @@
 {
   "cacheBootResources": true,
-  "config": [ ],
+  "config": [
+    "appsettings.json"
+  ],
   "debugBuild": false,
   "entryAssembly": "Signal",
   "icuDataMode": 0,
@@ -11,9 +13,9 @@
       "Microsoft.AspNetCore.Components.dll": "sha256-73XVTyMvcZt6MCrPXyKsra97Lw59VpsfHk7nZEXV+E0=",
       "Microsoft.AspNetCore.Components.Forms.dll": "sha256-rTSLQ7F\/eWAfcmvz9V1hsH+8FlM8M+iX9ZdLYsg4iyA=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-C1CZyfr6rlj1nnUHqSLX8N59uq1iYMeovWE\/8hIK4yY=",
-      "Microsoft.AspNetCore.Components.WebAssembly.dll": "sha256-Ph2ZOl\/LOY2cCUG\/S2iA61YUWIsDlcAHFxzdTG43rPw=",
-      "Microsoft.Extensions.Configuration.Abstractions.dll": "sha256-zhFtW4kE16TdrpPne9I1Cu9o0KYzrS50VE9MVSifJg4=",
-      "Microsoft.Extensions.Configuration.dll": "sha256-QPR+1IXNcA28b\/gXw3uZ8aRigHIZUJ1KWSH02kkCg7Q=",
+      "Microsoft.AspNetCore.Components.WebAssembly.dll": "sha256-h5y951iWsU8eq+vM5cKLGVaFBBzFAS8uDAo70m0vVFM=",
+      "Microsoft.Extensions.Configuration.Abstractions.dll": "sha256-HLhNV5c3ELda96JVlZKBEIMvShXWD8fRbWmMEivNePE=",
+      "Microsoft.Extensions.Configuration.dll": "sha256-Z1mNchrpcVEHIc2ug4Ef7voqs3dQNAyJ8s2AUqoCyCI=",
       "Microsoft.Extensions.Configuration.Json.dll": "sha256-fF3xaP+hT6R3GYUctLIY1ixaXQ8mrHzwWHHf2dKfueU=",
       "Microsoft.Extensions.DependencyInjection.Abstractions.dll": "sha256-\/p5v7Dz+I4Dsr7j42TAW05PUq9sk+gTFCY60\/Zbq7jE=",
       "Microsoft.Extensions.DependencyInjection.dll": "sha256-pYDNELbgbO60zgvgH5SP8004wkA0+o\/KlQxFXl\/uS2A=",
@@ -24,7 +26,7 @@
       "Microsoft.JSInterop.dll": "sha256-XM31K\/dFx+dxRmtViXtJgc0al7v4852UFUEMoSD2q14=",
       "Microsoft.JSInterop.WebAssembly.dll": "sha256-vnE\/f0iqOlVKaRjTpLiArMb+lw6INqH0HhqcMh9FPe0=",
       "MudBlazor.dll": "sha256-fmv25H\/sCZePzpkLolpnIqgUT3cA9R85tzuL1RWc3Jw=",
-      "Signal.dll": "sha256-4wOUget\/qeCZfJz5sXqitsi85q87Vwd2tfZCQ1scVlc=",
+      "Signal.dll": "sha256-Jj50QTiSyml33mRqWMSElFgxhJeXv+cbg8z0V8S\/ZZc=",
       "System.Collections.Concurrent.dll": "sha256-kSnSlTmY+vDEGBGrC2mjYdXA5ejllqrzDKGuNL314Ss=",
       "System.Collections.dll": "sha256-FAUMEjaxJOxLr17zZ5PpO4CgoNQ1WEiROnqRs8gNBoU=",
       "System.ComponentModel.Annotations.dll": "sha256-vmtsWtnzAczh3ZJKYKU1wmSjFeXcm1ffvATZPSZkhN4=",
