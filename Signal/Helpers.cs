@@ -31,11 +31,13 @@ namespace Signal
         public SequenceCities[] sequenceCities;
 
         Pages.Index _Index;
+        IConfiguration _Configuration;
 
         public async Task Initialize(HttpClient http, Blazored.LocalStorage.ILocalStorageService localStorage, IConfiguration configuration, Pages.Index index = null)
         {
             _Index = index;
             _Http = http;
+            _Configuration = configuration;
 
             DataPath = await localStorage.GetItemAsync<string>("dataPath");
 
@@ -107,7 +109,9 @@ namespace Signal
             }
             _Index.CreateTimer();
 
-            return t;
+            var timerMessage = _Configuration.GetValue<bool>("TimerMessage");
+
+            return timerMessage ? t : null;
         }
 
     }
