@@ -1,10 +1,13 @@
 ﻿@page "/"
+
 @using System.Threading
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject Helpers helpers_
 @inject IJSRuntime _jsRuntime;
 @implements IDisposable
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration configuration
 
 <audio id="roar" src="sounds/sound2.mp3" />
 
@@ -45,15 +48,23 @@
 
 @code {
 
+    /*[CascadingParameter]
+    protected System.Threading.Timer timer { get; set; }*/
+
     private SequenceCities[] sequenceCities;
-    System.Threading.Timer timer;
+    public System.Threading.Timer timer;
     CountdownView Data { get; set; }
     private bool isLast = false;
 
     protected override async Task OnInitializedAsync()
     {
-        if (!helpers_.IsInitialized) await helpers_.Initialize(Http, localStorage);
+        if (!helpers_.IsInitialized) await helpers_.Initialize(Http, localStorage, configuration, this);
+        
+        CreateTimer();
+    }
 
+    public void CreateTimer()
+    {
         int num = 0; 
         // устанавливаем метод обратного вызова
         TimerCallback tm = new TimerCallback(CallbackTimer);
