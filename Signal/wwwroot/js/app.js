@@ -3,5 +3,6 @@
 }
 
 window.WakeLockMethod = () => {
-    wakeLock = navigator.wakeLock.request('screen');
+    if (navigator.wakeLock)
+        wakeLock = navigator.wakeLock.request('screen');
 }
