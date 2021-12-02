@@ -1,0 +1,29 @@
+name: gh-pages
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.*
+    - name: Publish with dotnet
+      run: dotnet publish --configuration Release --output build
+    - name: Change base-tag in index.html from / to Signal
+      run: sed -i 's/<base href="\/" \/>/<base href="\/Signal\/" \/>/g' build/wwwroot/index.html
+    - name: copy index.html to 404.html
+      run: cp build/wwwroot/index.html build/wwwroot/404.html
+    - name: Add .nojekyll file
+      run: touch build/wwwroot/.nojekyll      
+    - name: Deploy to Github Pages
+      uses: JamesIves/github-pages-deploy-action@4.1.7
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages # The branch the action should deploy to.
+        FOLDER: build/wwwroot # The folder the action should deploy.
