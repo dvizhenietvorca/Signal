@@ -26,6 +26,7 @@ namespace Signal
         private HttpClient _Http;
 
         public string DataPath;
+        public bool SoundOn;
 
 
         public SequenceCities[] sequenceCities;
@@ -40,9 +41,12 @@ namespace Signal
             _Configuration = configuration;
 
             DataPath = await localStorage.GetItemAsync<string>("dataPath");
-
             if (string.IsNullOrEmpty(DataPath))
                 DataPath = configuration["dataPath"];
+
+            var s1 = await localStorage.GetItemAsync<bool>("soundOn");
+            var s2 = configuration.GetValue<bool>("SoundOn");
+            SoundOn = s1 | s2;
 
             await LoadData();
 

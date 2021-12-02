@@ -93,7 +93,8 @@
 
     public async Task PlaySound()
     {
-        await _jsRuntime.InvokeAsync<string>("PlayAudio", "roar");
+        if (helpers_.SoundOn)
+            await _jsRuntime.InvokeAsync<string>("PlayAudio", "roar");
     }
 
     private void CallbackTimer(object obj)
