@@ -27,6 +27,7 @@ namespace Signal
 
         public string DataPath;
         public bool SoundOn;
+        public bool ImgOn;
 
 
         public SequenceCities[] sequenceCities;
@@ -47,6 +48,8 @@ namespace Signal
             var s1 = await localStorage.GetItemAsync<bool>("soundOn");
             var s2 = configuration.GetValue<bool>("SoundOn");
             SoundOn = s1 | s2;
+
+            ImgOn = await localStorage.GetItemAsync<bool>("imgOn");
 
             await LoadData();
 

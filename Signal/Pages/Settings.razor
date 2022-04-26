@@ -19,7 +19,9 @@
         <MudTextField T="string" Value="@DataPath" ValueChanged="OnDataPathChanged" OnAdornmentClick="OnLoad" Placeholder="Путь к данным" Adornment="Adornment.End" AdornmentIcon="@Icons.Filled.Refresh" />
     </MudItem>
 </MudGrid>
+
 <MudSwitch T="bool" Checked="@SoundOn" CheckedChanged="OnSoundTurnChanged" Label="Звуковой сигнал" title="Для срабатывания звукового сигнала, при достижении обратным отсчётом нулевого значения" Color="Color.Primary" />
+<MudSwitch T="bool" Checked="@ImgOn" CheckedChanged="OnImgTurnChanged" Label="Изображение" title="Отображение на главной странице изображения (с картой)" Color="Color.Primary" />
 
 @if (sequenceCities == null)
 {
@@ -42,19 +44,25 @@ else
     </MudTable>
 }
 
+<MudText>Приложение: @AppVer</MudText>
 
 
 @code {
+    private Version AppVer;
     private SequenceCities[] sequenceCities;
     private string DataPath { get; set; }
     private bool SoundOn { get; set; }
+    private bool ImgOn { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        AppVer = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+
         if (!helpers_.IsInitialized) await helpers_.Initialize(Http, localStorage, configuration);
         sequenceCities = helpers_.sequenceCities;
         DataPath = helpers_.DataPath;
         SoundOn = helpers_.SoundOn;
+        ImgOn = helpers_.ImgOn;
         StateHasChanged();
     }
 
@@ -80,6 +88,14 @@ else
         helpers_.SoundOn = value;
 
         await localStorage.SetItemAsync("soundOn", value);
+    }
+
+    private async Task OnImgTurnChanged(bool value)
+    {
+        ImgOn = value;
+        helpers_.ImgOn = value;
+
+        await localStorage.SetItemAsync("imgOn", value);
     }
 
     private async Task OnLoad()
