@@ -22,6 +22,8 @@
 
 <MudSwitch T="bool" Checked="@SoundOn" CheckedChanged="OnSoundTurnChanged" Label="Звуковой сигнал" title="Для срабатывания звукового сигнала, при достижении обратным отсчётом нулевого значения" Color="Color.Primary" />
 <MudSwitch T="bool" Checked="@ImgOn" CheckedChanged="OnImgTurnChanged" Label="Изображение" title="Отображение на главной странице изображения (с картой)" Color="Color.Primary" />
+<MudSwitch T="bool" Checked="@TextCommonOn" CheckedChanged="OnTextCommonChanged" Label="Общий текст" title="Отображение в таймере общего текста для каждой точки" Color="Color.Primary" />
+<MudSwitch T="bool" Checked="@TextPointOn" CheckedChanged="OnTextPointChanged" Label="Основной текст" title="Отображение в таймере основного текста каждой точки" Color="Color.Primary" />
 
 @if (sequenceCities == null)
 {
@@ -32,17 +34,18 @@ else
     <MudTable Items="sequenceCities" Hover="true" RowsPerPage=25 SortLabel="Sort By" Elevation="0">
         <HeaderContent>
             <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<SequenceCities, object>(x=>x.Date)">Время</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<SequenceCities, object>(x=>x.City)">Место</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SequenceCities, object>(x=>x.Point)">Место</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Время">@context.Date</MudTd>
-            <MudTd DataLabel="Место">@context.City</MudTd>
+            <MudTd DataLabel="Место">@context.Point</MudTd>
         </RowTemplate>
         <PagerContent>
             <MudTablePager PageSizeOptions="new int[]{50, 100}" />
         </PagerContent>
     </MudTable>
 }
+
 
 <MudText>Приложение: @AppVer</MudText>
 
@@ -53,6 +56,8 @@ else
     private string DataPath { get; set; }
     private bool SoundOn { get; set; }
     private bool ImgOn { get; set; }
+    private bool TextCommonOn { get; set; }
+    private bool TextPointOn { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,6 +68,9 @@ else
         DataPath = helpers_.DataPath;
         SoundOn = helpers_.SoundOn;
         ImgOn = helpers_.ImgOn;
+        TextCommonOn = helpers_.TextCommonOn;
+        TextPointOn = helpers_.TextPointOn;
+
         StateHasChanged();
     }
 
@@ -96,6 +104,22 @@ else
         helpers_.ImgOn = value;
 
         await localStorage.SetItemAsync("imgOn", value);
+    }
+
+    private async Task OnTextCommonChanged(bool value)
+    {
+        TextCommonOn = value;
+        helpers_.TextCommonOn = value;
+
+        await localStorage.SetItemAsync("textCommonOn", value);
+    }
+
+    private async Task OnTextPointChanged(bool value)
+    {
+        TextPointOn = value;
+        helpers_.TextPointOn = value;
+
+        await localStorage.SetItemAsync("textPointOn", value);
     }
 
     private async Task OnLoad()

@@ -30,14 +30,30 @@
                     PlaySound();
                 }
 
-                if (Data?.PointCur?.City != Data?.PointNext?.City)
+                if (Data?.PointCur?.Point != Data?.PointNext?.Point)
                 {
-                    <MudText Typo="Typo.h4" Align="Align.Center"><small></small>@Data?.PointCur?.City</MudText>
+                    <MudText Typo="Typo.h4" Align="Align.Center"><small></small>@Data?.PointCur?.Point</MudText>
+                    @if(TextCommonOn && (Data?.PointCur?.Common ?? false))
+                    {
+                        <MudText Typo="Typo.h5" Align="Align.Center">@TextCommon</MudText>
+                    }
+                    @if(TextPointOn)
+                    {
+                        <MudText Typo="Typo.h5" Align="Align.Center">@Data?.PointCur?.Text</MudText>
+                    }
                 }
                 <MudText Typo="Typo.h3" Align="Align.Center">@s</MudText>
-                if (Data?.PointCur?.City != Data?.PointNext?.City)
+                if (Data?.PointCur?.Point != Data?.PointNext?.Point)
                 {
-                    <MudText Typo="Typo.h4" Align="Align.Center"><small></small>@(Data?.PointNext?.City ?? "Финиш")</MudText>
+                    <MudText Typo="Typo.h6" Align="Align.Center">@(Data?.PointNext?.Point ?? "Финиш")</MudText>
+                    @if(TextCommonOn && (Data?.PointNext?.Common ?? false))
+                    {
+                        <MudText Typo="Typo.h5" Align="Align.Center">@TextCommon</MudText>
+                    }
+                    @if(TextPointOn)
+                    {
+                        <MudText Typo="Typo.h5" Align="Align.Center">@Data?.PointNext?.Text</MudText>
+                    }
                 }
             }
             else
@@ -69,11 +85,17 @@
     private bool isLast = false;
     int _Width = 0;
     private bool ImgOn { get; set; }
+    private string TextCommon { get; set; }
+    private bool TextCommonOn { get; set; }
+    private bool TextPointOn { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         if (!helpers_.IsInitialized) await helpers_.Initialize(Http, localStorage, configuration, this);
         ImgOn = helpers_.ImgOn;
+        TextCommonOn = helpers_.TextCommonOn;
+        TextPointOn = helpers_.TextPointOn;
+        TextCommon = configuration["TextCommon"];
 
         CreateTimer();
     }

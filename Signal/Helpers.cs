@@ -28,6 +28,8 @@ namespace Signal
         public string DataPath;
         public bool SoundOn;
         public bool ImgOn;
+        public bool TextCommonOn;
+        public bool TextPointOn;
 
 
         public SequenceCities[] sequenceCities;
@@ -50,6 +52,8 @@ namespace Signal
             SoundOn = s1 | s2;
 
             ImgOn = await localStorage.GetItemAsync<bool>("imgOn");
+            TextCommonOn = await localStorage.GetItemAsync<bool>("textCommonOn");
+            TextPointOn = await localStorage.GetItemAsync<bool>("textPointOn");
 
             await LoadData();
 
@@ -127,7 +131,9 @@ namespace Signal
     {
         public DateTime? Date { get; set; }
 
-        public string City { get; set; }
+        public string Point { get; set; }
+        public string Text { get; set; }
+        public bool Common { get; set; }
     }
 
     public class CountdownView
