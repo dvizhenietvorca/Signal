@@ -14,7 +14,7 @@
     <MudAppBar Dense=true Elevation="0">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Filled.Refresh" Color="Color.Inherit" OnClick="@((e) => RefreshTimer())" />
+        <MudIconButton Icon="@Icons.Filled.Refresh" Color="Color.Inherit" OnClick="@((e) => RefreshTimer())" Title="Обновить обратный отсчёт" />
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
         <MudDrawerHeader>
@@ -23,11 +23,9 @@
         <NavMenu />
     </MudDrawer>
     <MudMainContent>
-        <CascadingValue Value="timer">
-            <MudContainer MaxWidth="MaxWidth.False">
-                @Body
-            </MudContainer>
-        </CascadingValue>
+        <MudContainer MaxWidth="MaxWidth.False">
+            @Body
+        </MudContainer>
     </MudMainContent>
 </MudLayout>
 
@@ -36,8 +34,6 @@
     bool _drawerOpen = true;
 
     [Inject] private IDialogService DialogService { get; set; }
-
-    private System.Threading.Timer timer;
 
     protected override async Task OnInitializedAsync()
     {
@@ -49,14 +45,14 @@
 
         if (_openPopup)
         {
-            bool? result = await DialogService.ShowMessageBox(
+            /*bool? result = await DialogService.ShowMessageBox(
                 "Внимание", 
                 "Для правильной работы звукового сигнала необходимо, чтоб главная страница этого сайта всегда была открыта, а на смартфоне экран не погашен!", 
                 yesText:"Понятно!", cancelText:"Отмена");
 
-            if (result != null) await localStorage.SetItemAsync("isReadFirst", true);
+            if (result != null) await localStorage.SetItemAsync("isReadFirst", true);*/
 
-            StateHasChanged();
+            //StateHasChanged();
         }
 
 
@@ -75,7 +71,7 @@
     async Task RefreshTimer()
     {
         var t = helpers_.RefreshTimer();
-        await DialogService.ShowMessageBox("Test", "Timer = "+t);
+        if(t != null) await DialogService.ShowMessageBox("Test", "Timer = "+t);
     }
 
 

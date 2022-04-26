@@ -6,9 +6,22 @@
 @using System.Linq
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration configuration
+@inject IDialogService DialogService
 
-<MudDatePicker Label="Дата Посыла" DateChanged="OnDateChanged" />
-<MudTimePicker Label="Час Посыла" TimeChanged="OnTimeChanged" OpenTo="OpenTo.Hours" TimeEditMode="TimeEditMode.OnlyHours" />
+<MudGrid>
+    <MudItem xs="12" sm="6" md="2">
+        <MudDatePicker Label="Дата Посыла" DateChanged="OnDateChanged" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="2">
+        <MudTimePicker Label="Час Посыла" TimeChanged="OnTimeChanged" OpenTo="OpenTo.Hours" TimeEditMode="TimeEditMode.OnlyHours" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="8">
+        <MudTextField T="string" Value="@DataPath" ValueChanged="OnDataPathChanged" OnAdornmentClick="OnLoad" Placeholder="Путь к данным" Adornment="Adornment.End" AdornmentIcon="@Icons.Filled.Refresh" />
+    </MudItem>
+</MudGrid>
+
+<MudSwitch T="bool" Checked="@SoundOn" CheckedChanged="OnSoundTurnChanged" Label="Звуковой сигнал" title="Для срабатывания звукового сигнала, при достижении обратным отсчётом нулевого значения" Color="Color.Primary" />
+<MudSwitch T="bool" Checked="@ImgOn" CheckedChanged="OnImgTurnChanged" Label="Изображение" title="Отображение на главной странице изображения (с картой)" Color="Color.Primary" />
 
 @if (sequenceCities == null)
 {
@@ -31,18 +44,25 @@ else
     </MudTable>
 }
 
-<MudTextField T="string" Value="@DataPath" ValueChanged="OnDataPathChanged" OnAdornmentClick="OnLoad" Placeholder="Путь к данным" Adornment="Adornment.End" AdornmentIcon="@Icons.Filled.Refresh" />
+<MudText>Приложение: @AppVer</MudText>
 
 
 @code {
+    private Version AppVer;
     private SequenceCities[] sequenceCities;
     private string DataPath { get; set; }
+    private bool SoundOn { get; set; }
+    private bool ImgOn { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        AppVer = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+
         if (!helpers_.IsInitialized) await helpers_.Initialize(Http, localStorage, configuration);
         sequenceCities = helpers_.sequenceCities;
         DataPath = helpers_.DataPath;
+        SoundOn = helpers_.SoundOn;
+        ImgOn = helpers_.ImgOn;
         StateHasChanged();
     }
 
@@ -52,6 +72,30 @@ else
         helpers_.DataPath = value;
 
         await localStorage.SetItemAsync("dataPath", value);
+    }
+
+    private async Task OnSoundTurnChanged(bool value)
+    {
+        if (value)
+        {
+            await DialogService.ShowMessageBox(
+                "Внимание", 
+                "Для правильной работы звукового сигнала необходимо, чтоб главная страница этого сайта всегда была открыта, а на смартфоне экран не погашен! На смартфонах возможно запаздывание срабатывания сигнала на несколько секунд.", 
+                yesText:"Понятно");
+        }
+
+        SoundOn = value;
+        helpers_.SoundOn = value;
+
+        await localStorage.SetItemAsync("soundOn", value);
+    }
+
+    private async Task OnImgTurnChanged(bool value)
+    {
+        ImgOn = value;
+        helpers_.ImgOn = value;
+
+        await localStorage.SetItemAsync("imgOn", value);
     }
 
     private async Task OnLoad()

@@ -26,21 +26,30 @@ namespace Signal
         private HttpClient _Http;
 
         public string DataPath;
+        public bool SoundOn;
+        public bool ImgOn;
 
 
         public SequenceCities[] sequenceCities;
 
         Pages.Index _Index;
+        IConfiguration _Configuration;
 
         public async Task Initialize(HttpClient http, Blazored.LocalStorage.ILocalStorageService localStorage, IConfiguration configuration, Pages.Index index = null)
         {
             _Index = index;
             _Http = http;
+            _Configuration = configuration;
 
             DataPath = await localStorage.GetItemAsync<string>("dataPath");
-
             if (string.IsNullOrEmpty(DataPath))
                 DataPath = configuration["dataPath"];
+
+            var s1 = await localStorage.GetItemAsync<bool>("soundOn");
+            var s2 = configuration.GetValue<bool>("SoundOn");
+            SoundOn = s1 | s2;
+
+            ImgOn = await localStorage.GetItemAsync<bool>("imgOn");
 
             await LoadData();
 
@@ -107,7 +116,9 @@ namespace Signal
             }
             _Index.CreateTimer();
 
-            return t;
+            var timerMessage = _Configuration.GetValue<bool>("TimerMessage");
+
+            return timerMessage ? t : null;
         }
 
     }
