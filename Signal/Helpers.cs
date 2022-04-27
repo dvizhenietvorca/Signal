@@ -26,6 +26,7 @@ namespace Signal
         private HttpClient _Http;
 
         public string DataPath;
+        public string ImgPath;
         public bool SoundOn;
         public bool ImgOn;
         public bool TextCommonOn;
@@ -71,11 +72,16 @@ namespace Signal
                 {
                     sequenceCities = await _Http.GetFromJsonAsync<SequenceCities[]>(DataPath + "?v=" + rndValue);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                 }
             }
             else sequenceCities = null;
+
+            Array.ForEach(sequenceCities, x => {
+                x.Date = DateTime.Now.Date.Add(new TimeSpan(x.Date.Value.Hour, x.Date.Value.Minute, x.Date.Value.Second));
+            });
+
         }
 
         /// <summary>

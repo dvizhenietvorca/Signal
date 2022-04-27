@@ -32,27 +32,27 @@
 
                 if (Data?.PointCur?.Point != Data?.PointNext?.Point)
                 {
-                    <MudText Typo="Typo.h4" Align="Align.Center"><small></small>@Data?.PointCur?.Point</MudText>
+                    <MudText Typo="Typo.h4" Align="Align.Center">@Data?.PointCur?.Point<small> (@Data?.PointCur?.Date.Value.ToShortTimeString())</small></MudText>
                     @if(TextCommonOn && (Data?.PointCur?.Common ?? false))
                     {
                         <MudText Typo="Typo.h5" Align="Align.Center">@TextCommon</MudText>
                     }
                     @if(TextPointOn)
                     {
-                        <MudText Typo="Typo.h5" Align="Align.Center">@Data?.PointCur?.Text</MudText>
+                        <MudText Typo="Typo.h5" Align="Align.Center" Style="font-style: italic;">@Data?.PointCur?.Text</MudText>
                     }
                 }
-                <MudText Typo="Typo.h3" Align="Align.Center">@s</MudText>
+                <MudText Typo="Typo.h3" Align="Align.Center" Class="py-4">@s</MudText>
                 if (Data?.PointCur?.Point != Data?.PointNext?.Point)
                 {
-                    <MudText Typo="Typo.h6" Align="Align.Center">@(Data?.PointNext?.Point ?? "Финиш")</MudText>
+                    <MudText Typo="Typo.h6" Align="Align.Center">@(Data?.PointNext?.Point ?? "Финиш")<small> (@Data?.PointNext?.Date.Value.ToShortTimeString())</small></MudText>
                     @if(TextCommonOn && (Data?.PointNext?.Common ?? false))
                     {
                         <MudText Typo="Typo.h5" Align="Align.Center">@TextCommon</MudText>
                     }
                     @if(TextPointOn)
                     {
-                        <MudText Typo="Typo.h5" Align="Align.Center">@Data?.PointNext?.Text</MudText>
+                        <MudText Typo="Typo.h5" Align="Align.Center" Style="font-style: italic;">@Data?.PointNext?.Text</MudText>
                     }
                 }
             }
@@ -66,7 +66,10 @@
     {
         <MudCardContent Style="overflow:auto">
             <div align="center">
-                <MudImage Fluid="true" Src="img/empty.jpg" Class="rounded-lg"/>
+                @if (!string.IsNullOrEmpty(ImgPath))
+                {
+                    <MudImage Fluid="true" Src="@ImgPath" Class="rounded-lg"/>
+                }
             </div>
         </MudCardContent>
     }
@@ -88,6 +91,7 @@
     private string TextCommon { get; set; }
     private bool TextCommonOn { get; set; }
     private bool TextPointOn { get; set; }
+    private string ImgPath { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,6 +100,7 @@
         TextCommonOn = helpers_.TextCommonOn;
         TextPointOn = helpers_.TextPointOn;
         TextCommon = configuration["TextCommon"];
+        ImgPath = helpers_.ImgPath;
 
         CreateTimer();
     }

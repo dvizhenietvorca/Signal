@@ -20,6 +20,8 @@
     </MudItem>
 </MudGrid>
 
+<MudTextField T="string" Value="@ImgPath" ValueChanged="OnImgPathChanged" Placeholder="Путь к изображению" />
+
 <MudSwitch T="bool" Checked="@SoundOn" CheckedChanged="OnSoundTurnChanged" Label="Звуковой сигнал" title="Для срабатывания звукового сигнала, при достижении обратным отсчётом нулевого значения" Color="Color.Primary" />
 <MudSwitch T="bool" Checked="@ImgOn" CheckedChanged="OnImgTurnChanged" Label="Изображение" title="Отображение на главной странице изображения (с картой)" Color="Color.Primary" />
 <MudSwitch T="bool" Checked="@TextCommonOn" CheckedChanged="OnTextCommonChanged" Label="Общий текст" title="Отображение в таймере общего текста для каждой точки" Color="Color.Primary" />
@@ -58,6 +60,7 @@ else
     private bool ImgOn { get; set; }
     private bool TextCommonOn { get; set; }
     private bool TextPointOn { get; set; }
+    private string ImgPath { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,6 +73,7 @@ else
         ImgOn = helpers_.ImgOn;
         TextCommonOn = helpers_.TextCommonOn;
         TextPointOn = helpers_.TextPointOn;
+        ImgPath = helpers_.ImgPath;
 
         StateHasChanged();
     }
@@ -80,6 +84,12 @@ else
         helpers_.DataPath = value;
 
         await localStorage.SetItemAsync("dataPath", value);
+    }
+
+    private async Task OnImgPathChanged(string value)
+    {
+        ImgPath = value;
+        helpers_.ImgPath = value;
     }
 
     private async Task OnSoundTurnChanged(bool value)
@@ -138,7 +148,13 @@ else
     private async Task OnTimeChanged(TimeSpan? time)
     {
         double h = (double)time?.Hours;
+        var diff = (double)sequenceCities[0].Date?.Hour - h;
 
-        Array.ForEach(sequenceCities, x => x.Date = x.Date?.AddHours(-(double)x.Date?.Hour).AddHours(h));
+        Array.ForEach(sequenceCities, x =>
+            {
+                var diff2 = diff - ((double)x.Date?.Hour - h);
+                x.Date = x.Date?.AddHours(-(double)x.Date?.Hour).AddHours(h).AddHours(-diff2);
+            }
+        );
     }
 }
