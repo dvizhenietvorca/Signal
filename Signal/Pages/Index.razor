@@ -10,7 +10,7 @@
 @inject IConfiguration configuration
 @using MudBlazor.Services
 
-<audio id="pre" src="sounds/sound1.ogg" />
+<audio id="pre" src="sounds/sound1.mp3" />
 <audio id="roar" src="sounds/bell.mp3" />
 
 @{
@@ -43,7 +43,7 @@
                     }
                     @if(TextPointOn)
                     {
-                        <MudText Typo="Typo.h5" Align="Align.Center" Style="font-style: italic;">@Data?.PointCur?.Text</MudText>
+                        <MudText Typo="Typo.h5" Align="Align.Center" Style="font-style: italic; font-weight: bold">@Data?.PointCur?.Text</MudText>
                     }
                 }
                 <MudText Typo="Typo.h3" Align="Align.Center" Class="py-4">@s</MudText>
@@ -56,7 +56,7 @@
                     }
                     @if(TextPointOn)
                     {
-                        <MudText Typo="Typo.h5" Align="Align.Center" Style="font-style: italic;">@Data?.PointNext?.Text</MudText>
+                        <MudText Typo="Typo.h5" Align="Align.Center" Style="font-style: italic; font-weight: bold">@Data?.PointNext?.Text</MudText>
                     }
                 }
             }
