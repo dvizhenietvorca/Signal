@@ -10,7 +10,8 @@
 @inject IConfiguration configuration
 @using MudBlazor.Services
 
-<audio id="roar" src="sounds/sound2.mp3" />
+<audio id="pre" src="sounds/sound1.ogg" />
+<audio id="roar" src="sounds/bell.mp3" />
 
 @{
     var styleCard = "height:" + (_Width < 600 ? "550px": "900px") + ";display:flex;flex-direction:column";
@@ -26,8 +27,11 @@
                 if(Data.Seconds < 3600) strFormat = "{1:D2}:{2:D2}";
                 string s = string.Format(strFormat, ((int) t.TotalHours), t.Minutes, t.Seconds);
     
+                if (TimePreSound > 0 && Data.Seconds == TimePreSound && !isLast) {
+                    PlaySound("pre");
+                }
                 if (Data.Seconds == 0 && !isLast) {
-                    PlaySound();
+                    PlaySound("roar");
                 }
 
                 if (Data?.PointCur?.Point != Data?.PointNext?.Point)
@@ -92,6 +96,7 @@
     private bool TextCommonOn { get; set; }
     private bool TextPointOn { get; set; }
     private string ImgPath { get; set; }
+    private int TimePreSound { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -99,8 +104,10 @@
         ImgOn = helpers_.ImgOn;
         TextCommonOn = helpers_.TextCommonOn;
         TextPointOn = helpers_.TextPointOn;
-        TextCommon = configuration["TextCommon"];
+        //TextCommon = configuration["TextCommon"];
         ImgPath = helpers_.ImgPath;
+        TextCommon = helpers_.TextCommon;
+        TimePreSound = helpers_.TimePreSound;
 
         CreateTimer();
     }
@@ -123,10 +130,10 @@
         timer = new Timer(tm, num, 0, 1000);
     }
 
-    public async Task PlaySound()
+    public async Task PlaySound(string sound)
     {
         if (helpers_.SoundOn)
-            await _jsRuntime.InvokeAsync<string>("PlayAudio", "roar");
+            await _jsRuntime.InvokeAsync<string>("PlayAudio", sound);
     }
 
     private void CallbackTimer(object obj)

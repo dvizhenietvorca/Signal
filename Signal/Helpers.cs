@@ -27,10 +27,12 @@ namespace Signal
 
         public string DataPath;
         public string ImgPath;
+        public string TextCommon;
         public bool SoundOn;
         public bool ImgOn;
         public bool TextCommonOn;
         public bool TextPointOn;
+        public int TimePreSound;
 
 
         public SequenceCities[] sequenceCities;
@@ -55,6 +57,8 @@ namespace Signal
             ImgOn = await localStorage.GetItemAsync<bool>("imgOn");
             TextCommonOn = await localStorage.GetItemAsync<bool>("textCommonOn");
             TextPointOn = await localStorage.GetItemAsync<bool>("textPointOn");
+            TextCommon = await localStorage.GetItemAsync<string>("textCommon");
+            TimePreSound = await localStorage.GetItemAsync<int>("timePreSound");
 
             await LoadData();
 
