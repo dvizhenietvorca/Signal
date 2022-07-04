@@ -33,6 +33,7 @@ namespace Signal
         public bool TextCommonOn;
         public bool TextPointOn;
         public int TimePreSound;
+        public double Volume;
 
 
         public SequenceCities[] sequenceCities;
@@ -59,6 +60,7 @@ namespace Signal
             TextPointOn = await localStorage.GetItemAsync<bool>("textPointOn");
             TextCommon = await localStorage.GetItemAsync<string>("textCommon");
             TimePreSound = await localStorage.GetItemAsync<int>("timePreSound");
+            Volume = await localStorage.GetItemAsync<double>("volume");
 
             await LoadData();
 
