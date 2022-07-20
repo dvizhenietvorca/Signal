@@ -111,8 +111,6 @@
         TimePreSound = helpers_.TimePreSound;
         Volume = helpers_.Volume;
 
-        //await _jsRuntime.InvokeAsync<double>("VolumeChange", /*Volume*/0.1);
-
         CreateTimer();
     }
 
@@ -122,6 +120,8 @@
         {
             var size = await ResizeService.GetBrowserWindowSize();
             _Width = size.Width;
+
+            await _jsRuntime.InvokeAsync<string>("VolumeChange", Math.Round(Volume/100, 2));
         }
     }
 

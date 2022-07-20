@@ -33,10 +33,10 @@
 </MudGrid>
 
 <MudSwitch T="bool" Checked="@SoundOn" CheckedChanged="OnSoundTurnChanged" Label="Звуковой сигнал" title="Для срабатывания звукового сигнала, при достижении обратным отсчётом нулевого значения" Color="Color.Primary" />
-<MudSlider T="double" Value="@Volume" ValueChanged="OnValueChanged">Громкость</MudSlider>
 <MudSwitch T="bool" Checked="@ImgOn" CheckedChanged="OnImgTurnChanged" Label="Изображение" title="Отображение на главной странице изображения (с картой)" Color="Color.Primary" />
 <MudSwitch T="bool" Checked="@TextCommonOn" CheckedChanged="OnTextCommonChanged" Label="Общий текст" title="Отображение в таймере общего текста для каждой точки" Color="Color.Primary" />
 <MudSwitch T="bool" Checked="@TextPointOn" CheckedChanged="OnTextPointChanged" Label="Основной текст" title="Отображение в таймере основного текста каждой точки" Color="Color.Primary" />
+<MudSlider T="double" Value="@Volume" ValueChanged="OnValueChanged" Variant="Variant.Filled" TickMarks="true" ValueLabel="true" Size="Size.Medium">Громкость: @Volume.ToString()</MudSlider>
 
 @if (sequenceCities == null)
 {
