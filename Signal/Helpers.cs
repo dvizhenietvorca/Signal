@@ -27,7 +27,23 @@ namespace Signal
 
         public string DataPath;
         public string ImgPath;
-        public string TextCommon;
+
+        private string textCommon;
+        public string TextCommon
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(TextCommonStore) && dataSettings != null) return dataSettings.TextCommon;
+                else return TextCommonStore;
+            }
+            set
+            {
+                textCommon = value;
+                NotifyStateChanged();
+            }
+        }
+
+        public string TextCommonStore;
         public bool SoundOn;
         public bool ImgOn;
         public bool TextCommonOn;
@@ -36,6 +52,7 @@ namespace Signal
         public double Volume;
 
 
+        public DataSettings dataSettings;
         public SequenceCities[] sequenceCities;
 
         Pages.Index _Index;
@@ -58,7 +75,7 @@ namespace Signal
             ImgOn = await localStorage.GetItemAsync<bool>("imgOn");
             TextCommonOn = await localStorage.GetItemAsync<bool>("textCommonOn");
             TextPointOn = await localStorage.GetItemAsync<bool>("textPointOn");
-            TextCommon = await localStorage.GetItemAsync<string>("textCommon");
+            TextCommonStore = await localStorage.GetItemAsync<string>("textCommon");
             TimePreSound = await localStorage.GetItemAsync<int>("timePreSound");
             Volume = await localStorage.GetItemAsync<double>("volume");
 
@@ -76,18 +93,23 @@ namespace Signal
 
                 try
                 {
-                    sequenceCities = await _Http.GetFromJsonAsync<SequenceCities[]>(DataPath + "?v=" + rndValue);
+                    dataSettings = await _Http.GetFromJsonAsync<DataSettings>(DataPath + "?v=" + rndValue);
+                    //sequenceCities = await _Http.GetFromJsonAsync<SequenceCities[]>(DataPath + "?v=" + rndValue);
                 }
                 catch (Exception ex)
                 {
+                    dataSettings = null;
                 }
             }
-            else sequenceCities = null;
+            else dataSettings = null;
 
-            Array.ForEach(sequenceCities, x => {
+            Array.ForEach(dataSettings.SequencePoints, x => {
                 x.Date = DateTime.Now.Date.Add(new TimeSpan(x.Date.Value.Hour, x.Date.Value.Minute, x.Date.Value.Second));
             });
 
+            sequenceCities = dataSettings.SequencePoints;
+            if (string.IsNullOrEmpty(TextCommonStore)) TextCommon = dataSettings.TextCommon;
+            else TextCommon = TextCommonStore;
         }
 
         /// <summary>
@@ -137,6 +159,12 @@ namespace Signal
             return timerMessage ? t : null;
         }
 
+    }
+
+    public class DataSettings
+    {
+        public string TextCommon { get; set; }
+        public SequenceCities[] SequencePoints { get; set; }
     }
 
     public class SequenceCities

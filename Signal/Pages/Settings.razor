@@ -13,7 +13,7 @@
         <MudNumericField T="int" Value="TimePreSound" ValueChanged="OnTimePreSoundChanged" Label="Предварительный сигнал (сек.)" Variant="Variant.Text" Min="0" Max="100" />
     </MudItem>
     <MudItem xs="12" sm="5" md="5">
-        <MudTextField T="string" Value="@TextCommon" ValueChanged="OnTextCommonChanged" Placeholder="Общий текст" />
+        <MudTextField T="string" Value="@TextCommon" ValueChanged="OnTextCommonChanged" Placeholder="Общий текст" title="Текст, идущий перед каждой Заповледью" />
     </MudItem>
     <MudItem xs="12" sm="5" md="5">
         <MudTextField T="string" Value="@ImgPath" ValueChanged="OnImgPathChanged" Placeholder="Путь к изображению" />
@@ -22,7 +22,7 @@
 
 <MudSwitch T="bool" Checked="@SoundOn" CheckedChanged="OnSoundTurnChanged" Label="Звуковой сигнал" title="Для срабатывания звукового сигнала, при достижении обратным отсчётом нулевого значения" Color="Color.Primary" />
 <MudSwitch T="bool" Checked="@ImgOn" CheckedChanged="OnImgTurnChanged" Label="Изображение" title="Отображение на главной странице изображения (с картой)" Color="Color.Primary" />
-<MudSwitch T="bool" Checked="@TextCommonOn" CheckedChanged="OnTextCommonChanged" Label="Общий текст" title="Отображение в таймере общего текста для каждой точки" Color="Color.Primary" />
+<MudSwitch T="bool" Checked="@TextCommonOn" CheckedChanged="OnTextCommonChanged" Label="Общий текст" title="Отображение в таймере общего текста (идущего перед каждой Заповледью) для каждой точки" Color="Color.Primary" />
 <MudSwitch T="bool" Checked="@TextPointOn" CheckedChanged="OnTextPointChanged" Label="Основной текст" title="Отображение в таймере основного текста каждой точки" Color="Color.Primary" />
 <MudSlider T="double" Value="@Volume" ValueChanged="OnValueChanged" Variant="Variant.Filled" TickMarks="true" ValueLabel="true" Size="Size.Medium">Громкость: @Volume.ToString()</MudSlider>
 
@@ -44,14 +44,16 @@
 }
 else
 {
-    <MudTable Items="sequenceCities" Hover="true" RowsPerPage=25 SortLabel="Sort By" Elevation="0">
+    <MudTable Items="sequenceCities" Hover="true" RowsPerPage=25 SortLabel="Сортировать по" Elevation="0">
         <HeaderContent>
             <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<SequenceCities, object>(x=>x.Date)">Время</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SequenceCities, object>(x=>x.Point)">Место</MudTableSortLabel></MudTh>
+            <MudTh>Текст</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Время">@context.Date</MudTd>
             <MudTd DataLabel="Место">@context.Point</MudTd>
+            <MudTd DataLabel="Текст">@context.Text</MudTd>
         </RowTemplate>
         <PagerContent>
             <MudTablePager PageSizeOptions="new int[]{50, 100}" />
@@ -65,7 +67,8 @@ else
 
 @code {
     private Version AppVer;
-    private SequenceCities[] sequenceCities;
+    //private SequenceCities[] sequenceCities;
+    private IEnumerable<SequenceCities> sequenceCities;
     private string DataPath { get; set; }
     private bool SoundOn { get; set; }
     private bool ImgOn { get; set; }
@@ -88,7 +91,7 @@ else
         TextCommonOn = helpers_.TextCommonOn;
         TextPointOn = helpers_.TextPointOn;
         ImgPath = helpers_.ImgPath;
-        TextCommon = helpers_.TextCommon;
+        TextCommon = helpers_.TextCommonStore;
         TimePreSound = helpers_.TimePreSound;
         Volume = helpers_.Volume;
 
@@ -112,7 +115,7 @@ else
     private async Task OnTextCommonChanged(string value)
     {
         TextCommon = value;
-        helpers_.TextCommon = value;
+        helpers_.TextCommonStore = value;
         await localStorage.SetItemAsync("textCommon", value);
     }
 
@@ -173,20 +176,27 @@ else
 
     private async Task OnDateChanged(DateTime? date)
     {
-        Array.ForEach(sequenceCities, x => x.Date = date?.AddHours((double)x.Date?.Hour).AddMinutes((double)x.Date?.Minute));
+        //Array.ForEach(sequenceCities, x => x.Date = date?.AddHours((double)x.Date?.Hour).AddMinutes((double)x.Date?.Minute));
+        foreach (var point in sequenceCities)
+            point.Date = date?.AddHours((double)point.Date?.Hour).AddMinutes((double)point.Date?.Minute);
     }
 
     private async Task OnTimeChanged(TimeSpan? time)
     {
         double h = (double)time?.Hours;
-        var diff = (double)sequenceCities[0].Date?.Hour - h;
+        var diff = (double)sequenceCities.ElementAt(0).Date?.Hour - h;
 
-        Array.ForEach(sequenceCities, x =>
+        /*Array.ForEach(sequenceCities, x =>
             {
                 var diff2 = diff - ((double)x.Date?.Hour - h);
                 x.Date = x.Date?.AddHours(-(double)x.Date?.Hour).AddHours(h).AddHours(-diff2);
             }
-        );
+        );*/
+        foreach (var x in sequenceCities)
+        {
+            var diff2 = diff - ((double)x.Date?.Hour - h);
+            x.Date = x.Date?.AddHours(-(double)x.Date?.Hour).AddHours(h).AddHours(-diff2);
+        }
     }
 
     private async Task OnValueChanged(double value)
